@@ -1,0 +1,77 @@
+
+Interface
+---------
+
+Input options:
+	type/paste gene list into a box - cf. PANTHER, DAVID/EASE, FunSpec
+
+Display/download options:
+	table or list of tab-separated rows of data for the selected data
+	sources on each of the input genes
+
+
+Data types
+----------
+
+All data is ONLY for the budding yeast Saccharomyces cerevisiae (the same
+approach could be adopted for other model organisms)
+
+1) Expression (transcriptomics) data, organized by Lab/Condition.
+There are 2 sets of time course gene expression included.
+
+(a) Absolute expression values (includes expression levels at time t=0)
+
+Files are: "causton_*.tab"
+ 
+Suggested terminology:
+	Lab=Causton
+	Condition={acid,alkali,h2o2,heat,salt,sorbitol}
+
+(b) Relative (log-ratio) expression values (wrt expression at time t=0) 
+
+Files are: "gasch_*.tab"
+
+Suggested terminology:
+	Lab=Gasch
+	Condition={diamide,h2o2,heat,hyperosmotic,hypoosmotic,menadione}
+
+
+2) Properties. These are attributes of a gene, such as belonging to a
+cellular location, functional category or reaction pathway, etc. 
+There are 2 sets of gene annotation properties included.
+
+(a) GO terms. Only the GO IDs are included, but these can be included in
+URL strings to make a link to the appropriate page, where the term
+information is available. For example, a link to the EBI GO page
+for "response to oxidative stress (GO:0006979)" is:
+
+http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:0006979
+
+File is: "go.tab"
+
+(b) Pathways. This is the set of pathways from YeastCyc downloaded from
+SGD (see corresponding ReadMe for an explanation of the file format),
+
+Files are: "sgd_pathways.tab", "sgd_pathways.readme"
+
+3) Interactions. There are two types of interactions here, protein-protein
+and transcription-factor binding. Protein-protein interactions are
+undirected edges in the interaction graph, whereas transcription-factor
+binding edges are directed (from protein to genomic promoter region).
+
+Both files have two columns. For transcription-factor binding, the first
+column is the transcription-factor and the second is the gene that is
+regulated.
+
+Files are: "ppi.tab", "tfbinds.tab"
+
+4) Namespace conversion. 
+
+Like many model organisms, genes in yeast have different names. The two
+main name spaces used are the ORF and the Standard Name. All ORFs denoted
+a part of the genomic sequence on one of the chromosomes (these start with
+a 'Y'). Standard names are more readable, and usually are an abbreviation
+of some function description of the gene.  A table is provided to enable
+conversion of ORF to Standard Name, or vice versa.
+
+File is: "orf2std.tab"
