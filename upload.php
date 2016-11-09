@@ -21,14 +21,12 @@ if($_POST["submit"] == "submitText"){
     $file = file_get_contents($_FILES['uploadedfile']['tmp_name']);
     var_dump($file);
     $_SESSION["uploadedGenes"] = explode("\n",str_replace(array("\r\n","\n\r","\r"),"\n",$file));
-    // Go back to index.php
-    //header('Location: index.php');
   }else{
     echo "Error, your file could not be uploaded.";
     echo '<br/><a href="../binflabs">Go back</a>';
     exit;
   }
-  // Go back to index.php
-  header('Location: index.php');
 }
+// Go back to index.php
+header('Location: index.php');
 ?>
