@@ -1,12 +1,5 @@
 <?php include("common/start.php"); custom_start();
 
-  // Grab uploaded data if it was posted from index.php
-  if(isset($_POST["submit"]) && ($_POST["submit"] == "Upload")){
-    echo "<p>POST DATA:</p>";
-    var_dump($_POST);
-    // Store the list as an array in uploadGenes separated by newlines
-    $_SESSION["uploadedGenes"] = explode("\n",str_replace(array("\r\n","\n\r","\r"),"\n",$_POST["genesTextbox"]));
-  }
 ?>
 
 <html lang="en">
