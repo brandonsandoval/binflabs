@@ -9,12 +9,20 @@
     session_set_cookie_params(24*3600);
     // Change session path to prevent it from being deleted from standard temp folder
     ini_set('session.save_path', '/tmp_amd/adams/export/adams/2/z5020926/public_html/binflabs/sessions');
+
+    // Make sure PHP displays errors
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    ini_set('display_errors', TRUE);
+    error_reporting(E_ALL);
+
+    // Start session
     session_start();
   }
 
   // Useful when needing to print all session data
   function print_session(){
-      echo '<pre>';
+      echo '<pre>DEBUGGING: [SESSION DATA]=';
       var_dump($_SESSION);
       echo '</pre>';
   }

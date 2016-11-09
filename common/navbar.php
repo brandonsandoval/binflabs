@@ -13,9 +13,12 @@
     <ul class="nav navbar-nav">
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'index.php') echo " class=\"active\"";
-        if(basename($_SERVER['PHP_SELF']) == 'auth.php') echo " class=\"active\"";
       ?>>
-      <a href="../binflabs">Home</a></li>
+      <a href="../binflabs">Upload</a></li>
+      <li<?php
+        if(basename($_SERVER['PHP_SELF']) == 'expression.php') echo " class=\"active\"";
+      ?>>
+      <a href="expression.php">Expression</a></li>
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'about.php') echo " class=\"active\"";
       ?>>
@@ -30,5 +33,5 @@
 <?php
 // DEBUGGING
 // Prints the session data that php files have access to
-// print_session();
+print_session();
 ?>
