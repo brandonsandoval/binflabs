@@ -11,8 +11,8 @@
 
 <html lang="en">
   <?php include 'common/header.php' ?>
+  <?php include 'common/navbar.php' ?>
 
-  <!-- START SIGMA IMPORTS -->
 <script src="js/sigma.js-1.2.0/src/sigma.core.js"></script>
 <script src="js/sigma.js-1.2.0/src/conrad.js"></script>
 <script src="js/sigma.js-1.2.0/src/utils/sigma.utils.js"></script>
@@ -59,53 +59,39 @@
 <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindEvents.js"></script>
 <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindDOMEvents.js"></script>
 <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.drawHovers.js"></script>
-<!-- END SIGMA IMPORTS -->
 <script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
 <script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
 <script src="js/sigma.js-1.2.0/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
-<link href='http://fonts.googleapis.com/css?family=Lato:300,700' rel='stylesheet' type='text/css'>
+<script src="js/sigma.js-1.2.0/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
 
 <style>
   body {
     color: #333;
     font-size: 14px;
-    font-family: Lato, sans-serif;
   }
   #graph-container {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    top: 20%;
+    bottom: 20%;
+    left: 30%;
+    right: 30%;
     position: absolute;
+    background-color: #f4f0e4;
   }
   #control-pane {
     top: 10px;
     /*bottom: 10px;*/
     right: 10px;
-    position: absolute;
     width: 230px;
     background-color: rgb(249, 247, 237);
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
   #control-pane > div {
     margin: 10px;
-    overflow-x: auto;
-  }
-  .line {
-    clear: both;
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 12px 0 0 0;
-    border-bottom: 1px solid #aac789;
-    background: transparent;
+    overflow-x: auto;s
   }
   h2, h3, h4 {
     padding: 0;
     font-variant: small-caps;
-  }
-  .green {
-    color: #437356;
   }
   h2.underline {
     color: #437356;
@@ -127,12 +113,11 @@
 </style>
 
   <body>
-    <?php include 'common/navbar.php' ?>
 
       <?php
         // Display notice if user has not uploaded anything
         if(!isset($_SESSION["uploadedGeneInteractions"])){
-          echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of gene interactions before continuingjs/sigma.js-1.2.0</b></p></div>';
+          echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of gene interactions before continuing..</b></p></div>';
         } else {
         // continue on if they have uploaded
           // Get an array of the unique genes
@@ -233,9 +218,6 @@
       }
 
       // Initialize sigma with the dataset:
-      //   e-Diaspora Moroccan corpus of websites
-      //   by Dana Diminescu & Matthieu Renault
-      //   http://www.e-diasporas.fr/wp/moroccan.html
       sigma.parsers.gexf('js/sigma.js-1.2.0/data/interactions.gexf', {
         container: 'graph-container',
         settings: {
@@ -250,6 +232,21 @@
 
         updatePane(s.graph, filter);
 
+        var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+
+        dragListener.bind('startdrag', function(event) {
+          console.log(event);
+        });
+        dragListener.bind('drag', function(event) {
+          console.log(event);
+        });
+        dragListener.bind('drop', function(event) {
+          console.log(event);
+        });
+        dragListener.bind('dragend', function(event) {
+          console.log(event);
+        });
+
         function applyMinDegreeFilter(e) {
           var v = e.target.value;
           _.$('min-degree-val').textContent = v;
@@ -263,8 +260,10 @@
         }
 
         _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
-        _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+, that sucks
+        _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+
       });
+
+      
       </script>
 
       <div id="container">
