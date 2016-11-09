@@ -14,7 +14,8 @@
         // Show a list of already uploaded genes
         if(isset($_SESSION["uploadedGenes"])) {
           echo '<div class="inner-container well">';
-          echo '<p><b>Current gene list:</b></p>';
+          echo '<p><b>Current gene list:</b>';
+          echo '<br/>You can now go to Expression, Interactions... in the navbar above</p>';
           echo '<ul>';
           foreach ($_SESSION["uploadedGenes"] as $value) {
             echo '<li>'.$value.'</li>';
@@ -24,23 +25,22 @@
       ?>
 
       <div class="inner-container well">
-        <form action="expression.php" name="geneSubmitText" method="POST">
+        <form action="upload.php" method="POST">
           <div class="form-group">
             <p><b>Type a list of genes below:</b> (separated by newlines)</p>
             <textarea type="text" class="form-control" rows="10" id="genesTextbox" name="genesTextbox"></textarea>
           </div>
-          <input class="btn btn-primary" type="submit" value="Upload" name="submit">
+          <button class="btn btn-primary" type="submit" value="submitText" name="submit">Upload</button>
         </form>
       </div>
 
       <div class="inner-container well">
         <p><b>OR</b></p>
-        <p><b>Upload a list of genes (10kb limit, only .txt files)</b></p>
-        <form action="upload.php" method="post" enctype="multipart/form-data">
-          <input class="btn btn-default" type="file" name="fileToUpload" id="fileToUpload">
+        <p><b>Upload a list of genes</b> (10kb limit, only .txt files with genes separated by newlines)</p>
+        <form action="upload.php" method="POST" enctype="multipart/form-data">
+          <input class="btn btn-default" type="file" name="uploadedfile" id="uploadedfile">
           <br/>
-          <input class="btn btn-primary" type="submit" value="Upload" name="submit">
-        <h6>*does not work at the moment, please use textbox above)</h6>
+          <button class="btn btn-primary" type="submit" value="submitFile" name="submit">Upload</button>
         </form>
       </div>
 
