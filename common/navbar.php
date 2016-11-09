@@ -20,6 +20,10 @@
       ?>>
       <a href="expression.php">Expression</a></li>
       <li<?php
+        if(basename($_SERVER['PHP_SELF']) == 'interaction.php') echo " class=\"active\"";
+      ?>>
+      <a href="interaction.php">Gene Interactions</a></li>
+      <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'about.php') echo " class=\"active\"";
       ?>>
       <a href="about.php">About</a></li>
