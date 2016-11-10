@@ -23,7 +23,6 @@
           echo '</ul></div>';
         }
       ?>
-
       <div class="inner-container well">
         <form action="upload.php" method="POST">
           <div class="form-group">
@@ -33,7 +32,7 @@
           <button class="btn btn-primary" type="submit" value="submitText" name="submit">Upload</button>
         </form>
       </div>
-
+    
       <div class="inner-container well">
         <p><b>OR</b></p>
         <p><b>Upload a list of genes</b> (10kb limit, only .txt files with genes separated by newlines)</p>

@@ -22,7 +22,7 @@
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'interaction.php') echo " class=\"active\"";
       ?>>
-      <a href="interaction.php">Gene Interactions</a></li>
+      <a href="interaction.php">Interaction</a></li>
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'about.php') echo " class=\"active\"";
       ?>>
@@ -33,9 +33,3 @@
   </div><!--/.nav-collapse -->
 </div>
 </nav>
-
-<?php
-// DEBUGGING
-// Prints the session data that php files have access to
-print_session();
-?>

@@ -27,6 +27,7 @@ if($_POST["submit"] == "submitText"){
     exit;
   }
 }
+$_SESSION["computedExpression"] = false;
 // Go back to index.php
 header('Location: index.php');
 ?>
