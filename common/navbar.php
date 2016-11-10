@@ -19,10 +19,17 @@
         if(basename($_SERVER['PHP_SELF']) == 'expression.php') echo " class=\"active\"";
       ?>>
       <a href="expression.php">Expression</a></li>
-      <li<?php
-        if(basename($_SERVER['PHP_SELF']) == 'interaction.php') echo " class=\"active\"";
+      
+      <li class="dropdown"<?php
+        if(basename($_SERVER['PHP_SELF']) == 'pp-interaction.php' or basename($_SERVER['PHP_SELF']) == 'tf-interaction.php') echo " class=\"active\"";
       ?>>
-      <a href="interaction.php">Interaction</a></li>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Interaction <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="pp-interaction.php">Protein-Protein Interactions</a></li>
+          <li><a href="tf-interaction.php">Transcription Factor Binding</a></li>
+        </ul>
+      </li>
+      <li
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'about.php') echo " class=\"active\"";
       ?>>

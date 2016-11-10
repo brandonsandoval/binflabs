@@ -121,17 +121,28 @@
           echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of gene interactions before continuing..</b></p></div>';
         } else {
         // continue on if they have uploaded
-          // Get an array of the unique genes
-          $string_of_genes = "";
+          // Get an array of the unique TFs
+          $string_of_tfs = " ";
           foreach ($_SESSION["uploadedGenes"] as $interaction) {
-            $string_of_genes .= preg_replace('/\s+/', ' ', $interaction) . ' ';
+            $string_of_tfs .= preg_replace('/\s+.*/', ' ', $interaction) . ' ';
+          }
+          $array_of_tfs = explode("\n", trim(shell_exec("echo $string_of_tfs | tr ' ' '\n' | sort | uniq")));
+
+          // Get an array of the unique genes
+          $string_of_genes = " ";
+          foreach ($_SESSION["uploadedGenes"] as $interaction) {
+            $string_of_genes .= preg_replace('/.*?\s+/', ' ', $interaction) . ' ';
           }
           $array_of_genes = explode("\n", trim(shell_exec("echo $string_of_genes | tr ' ' '\n' | sort | uniq")));
-
           // Create the data for the graph
-          $angle_differece = 2*pi()/count($array_of_genes);   //Userd to calculate the positions of thne nodes
+          $angle_differece = 2*pi()/(count($array_of_genes)+count($array_of_tfs));   //Used to calculate the positions of the nodes
+
           $count = 1;
-          $file_contents = '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="undirected" mode="static"><nodes>';
+          $file_contents = '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="directed" mode="static"><nodes>';
+          foreach ($array_of_tfs as $tf) {
+            $file_contents .= '<node id="' . $tf . '" label="' . $tf . '"><viz:size value="100"></viz:size><viz:color b="102" g="224" r="255"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>';
+            $count++;
+          }
           foreach ($array_of_genes as $gene) {
             $file_contents .= '<node id="' . $gene . '" label="' . $gene . '"><viz:size value="100"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>';
             $count++;
@@ -142,7 +153,7 @@
             $file_contents .= '<edge source="' . strstr($interaction, ' ', true) . '" target="' . trim(strstr($interaction, ' ')) . '"></edge>';
           }
           $file_contents .= '</edges></graph></gexf>';
-          file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', $file_contents);
+          file_put_contents('js/sigma.js-1.2.0/data/tf-interactions.gexf', $file_contents);
       ?>
 
       <script>
@@ -223,7 +234,7 @@
         }
 
         // Initialize sigma with the dataset:
-        sigma.parsers.gexf('js/sigma.js-1.2.0/data/interactions.gexf', {
+        sigma.parsers.gexf('js/sigma.js-1.2.0/data/tf-interactions.gexf', {
           container: 'graph-container',
           settings: {
             edgeColor: 'default',
@@ -273,7 +284,7 @@
       <div id="container-fluid">
         <div class="alert alert-info content" style="margin-left: 10px; margin-right: 10px;">
           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-          The graph below shows two-way protein-protein interactions. Proteins appear as nodes and interactions are depicted as undirected edges.
+          The graph below shows <b>transcription factor binding</b>. Transcription factors appear as yellow nodes the genes are depicted as yellow nodes.
         </div>
         <div id="graph-container"></div>
         <div id="control-pane">
