@@ -284,7 +284,7 @@
       <div id="container-fluid">
         <div class="alert alert-info content" style="margin-left: 10px; margin-right: 10px;">
           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-          The graph below shows <b>transcription factor binding</b>. Transcription factors appear as yellow nodes the genes are depicted as yellow nodes.
+          The graph below shows <b>transcription factor binding</b>. Transcription factors appear as <span style="color:#ffe066;">yellow</span> nodes the genes as <span style="color:#27b382;">green</span> nodes. The edges show which transcription factors regulate which genes.
         </div>
         <div id="graph-container"></div>
         <div id="control-pane">
