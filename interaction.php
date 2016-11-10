@@ -5,7 +5,7 @@
     echo "<p>POST DATA:</p>";
     var_dump($_POST);
     // Store the list as an array in uploadGenes separated by newlines
-    $_SESSION["uploadedGeneInteractions"] = explode("\n", str_replace(array("\r\n","\n\r","\r"),"\n",$_POST["genesTextbox"]));
+    $_SESSION["uploadedGenes"] = explode("\n", str_replace(array("\r\n","\n\r","\r"), "\n", $_POST["genesTextbox"]));
   }
 ?>
 
@@ -70,24 +70,23 @@
     font-size: 14px;
   }
   #graph-container {
-    top: 20%;
-    bottom: 20%;
-    left: 30%;
-    right: 30%;
+    height: 70%;
+    left: 25%;
+    width: 50%;
+    background-color: #d9edf7;
+    border-radius: 4px;
     position: absolute;
-    background-color: #f4f0e4;
+    border: 1px solid #bce8f1;
   }
   #control-pane {
-    top: 10px;
-    /*bottom: 10px;*/
-    right: 10px;
-    width: 230px;
+    top: 91%;
+    position: absolute;
+    left: 25%;
+    width: 50%;
     background-color: rgb(249, 247, 237);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
   #control-pane > div {
     margin: 10px;
-    overflow-x: auto;s
   }
   h2, h3, h4 {
     padding: 0;
@@ -105,6 +104,9 @@
     display: none;
     visibility: hidden;
   }
+  .content {
+    text-align: center;
+  }
 
   input[type=range] {
     width: 160px;
@@ -113,177 +115,190 @@
 </style>
 
   <body>
-
       <?php
         // Display notice if user has not uploaded anything
-        if(!isset($_SESSION["uploadedGeneInteractions"])){
+        if(!isset($_SESSION["uploadedGenes"])){
           echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of gene interactions before continuing..</b></p></div>';
         } else {
         // continue on if they have uploaded
           // Get an array of the unique genes
-
           $string_of_genes = "";
-          foreach ($_SESSION["uploadedGeneInteractions"] as $interaction) {
+          foreach ($_SESSION["uploadedGenes"] as $interaction) {
             $string_of_genes .= preg_replace('/\s+/', ' ', $interaction) . ' ';
           }
           $array_of_genes = explode("\n", trim(shell_exec("echo $string_of_genes | tr ' ' '\n' | sort | uniq")));
-          
-          file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="undirected" mode="static"><nodes>');
+
+          // Create the data for the graph
+          $angle_differece = 2*pi()/count($array_of_genes);   //Userd to calculate the positions of thne nodes
+          $count = 1;
+          $file_contents = '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="undirected" mode="static"><nodes>';
           foreach ($array_of_genes as $gene) {
-            file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', file_get_contents('js/sigma.js-1.2.0/data/interactions.gexf') . '<node id="' . $gene . '" label="' . $gene . '"><viz:size value="150"></viz:size><viz:position x="' . rand(0,1000) . '" y="' . rand(0,1000) . '"></viz:position></node>');
+            $file_contents .= '<node id="' . $gene . '" label="' . $gene . '"><viz:size value="100"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>';
+            $count++;
           }
-          file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', file_get_contents('js/sigma.js-1.2.0/data/interactions.gexf') . '</nodes><edges>');
-          foreach ($_SESSION["uploadedGeneInteractions"] as $interaction) {
+          $file_contents .= '</nodes><edges>';
+          foreach ($_SESSION["uploadedGenes"] as $interaction) {
             $interaction = preg_replace('/\s+/', ' ', $interaction);
-            file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', file_get_contents('js/sigma.js-1.2.0/data/interactions.gexf') . '<edge source="' . strstr($interaction, ' ', true) . '" target="' . trim(strstr($interaction, ' ')) . '"></edge>');
+            $file_contents .= '<edge source="' . strstr($interaction, ' ', true) . '" target="' . trim(strstr($interaction, ' ')) . '"></edge>';
           }
-          file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', file_get_contents('js/sigma.js-1.2.0/data/interactions.gexf') . '</edges></graph></gexf>');
+          $file_contents .= '</edges></graph></gexf>';
+          file_put_contents('js/sigma.js-1.2.0/data/interactions.gexf', $file_contents);
       ?>
 
       <script>
-      var filter;
+        var filter;
 
-      /**
-       * DOM utility functions
-       */
-      var _ = {
-        $: function (id) {
-          return document.getElementById(id);
-        },
+        /**
+         * DOM utility functions
+         */
+        var _ = {
+          $: function (id) {
+            return document.getElementById(id);
+          },
 
-        all: function (selectors) {
-          return document.querySelectorAll(selectors);
-        },
+          all: function (selectors) {
+            return document.querySelectorAll(selectors);
+          },
 
-        removeClass: function(selectors, cssClass) {
-          var nodes = document.querySelectorAll(selectors);
-          var l = nodes.length;
-          for ( i = 0 ; i < l; i++ ) {
-            var el = nodes[i];
-            // Bootstrap compatibility
-            el.className = el.className.replace(cssClass, '');
-          }
-        },
-
-        addClass: function (selectors, cssClass) {
-          var nodes = document.querySelectorAll(selectors);
-          var l = nodes.length;
-          for ( i = 0 ; i < l; i++ ) {
-            var el = nodes[i];
-            // Bootstrap compatibility
-            if (-1 == el.className.indexOf(cssClass)) {
-              el.className += ' ' + cssClass;
-            }
-          }
-        },
-
-        show: function (selectors) {
-          this.removeClass(selectors, 'hidden');
-        },
-
-        hide: function (selectors) {
-          this.addClass(selectors, 'hidden');
-        },
-
-        toggle: function (selectors, cssClass) {
-          var cssClass = cssClass || "hidden";
-          var nodes = document.querySelectorAll(selectors);
-          var l = nodes.length;
-          for ( i = 0 ; i < l; i++ ) {
-            var el = nodes[i];
-            //el.style.display = (el.style.display != 'none' ? 'none' : '' );
-            // Bootstrap compatibility
-            if (-1 !== el.className.indexOf(cssClass)) {
+          removeClass: function(selectors, cssClass) {
+            var nodes = document.querySelectorAll(selectors);
+            var l = nodes.length;
+            for ( i = 0 ; i < l; i++ ) {
+              var el = nodes[i];
+              // Bootstrap compatibility
               el.className = el.className.replace(cssClass, '');
-            } else {
-              el.className += ' ' + cssClass;
+            }
+          },
+
+          addClass: function (selectors, cssClass) {
+            var nodes = document.querySelectorAll(selectors);
+            var l = nodes.length;
+            for ( i = 0 ; i < l; i++ ) {
+              var el = nodes[i];
+              // Bootstrap compatibility
+              if (-1 == el.className.indexOf(cssClass)) {
+                el.className += ' ' + cssClass;
+              }
+            }
+          },
+
+          show: function (selectors) {
+            this.removeClass(selectors, 'hidden');
+          },
+
+          hide: function (selectors) {
+            this.addClass(selectors, 'hidden');
+          },
+
+          toggle: function (selectors, cssClass) {
+            var cssClass = cssClass || "hidden";
+            var nodes = document.querySelectorAll(selectors);
+            var l = nodes.length;
+            for ( i = 0 ; i < l; i++ ) {
+              var el = nodes[i];
+              //el.style.display = (el.style.display != 'none' ? 'none' : '' );
+              // Bootstrap compatibility
+              if (-1 !== el.className.indexOf(cssClass)) {
+                el.className = el.className.replace(cssClass, '');
+              } else {
+                el.className += ' ' + cssClass;
+              }
             }
           }
-        }
-      };
+        };
 
 
-      function updatePane (graph, filter) {
-        // get max degree
-        var maxDegree = 0;
-        
-        // read nodes
-        graph.nodes().forEach(function(n) {
-          maxDegree = Math.max(maxDegree, graph.degree(n.id));
-        })
+        function updatePane (graph, filter) {
+          // get max degree
+          var maxDegree = 0;
+          
+          // read nodes
+          graph.nodes().forEach(function(n) {
+            maxDegree = Math.max(maxDegree, graph.degree(n.id));
+          })
 
-        // min degree
-        _.$('min-degree').max = maxDegree;
-        _.$('max-degree-value').textContent = maxDegree;
-      }
-
-      // Initialize sigma with the dataset:
-      sigma.parsers.gexf('js/sigma.js-1.2.0/data/interactions.gexf', {
-        container: 'graph-container',
-        settings: {
-          edgeColor: 'default',
-          defaultEdgeColor: '#ccc'
-        }
-      },
-
-      function(s) {
-        // Initialize the Filter API
-        filter = new sigma.plugins.filter(s);
-
-        updatePane(s.graph, filter);
-
-        var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
-
-        dragListener.bind('startdrag', function(event) {
-          console.log(event);
-        });
-        dragListener.bind('drag', function(event) {
-          console.log(event);
-        });
-        dragListener.bind('drop', function(event) {
-          console.log(event);
-        });
-        dragListener.bind('dragend', function(event) {
-          console.log(event);
-        });
-
-        function applyMinDegreeFilter(e) {
-          var v = e.target.value;
-          _.$('min-degree-val').textContent = v;
-
-          filter
-            .undo('min-degree')
-            .nodesBy(function(n) {
-              return this.degree(n.id) >= v;
-            }, 'min-degree')
-            .apply();
+          // min degree
+          _.$('min-degree').max = maxDegree;
+          _.$('max-degree-value').textContent = maxDegree;
         }
 
-        _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
-        _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+
-      });
+        // Initialize sigma with the dataset:
+        sigma.parsers.gexf('js/sigma.js-1.2.0/data/interactions.gexf', {
+          container: 'graph-container',
+          settings: {
+            edgeColor: 'default',
+            defaultEdgeColor: '#ccc'
+          }
+        },
 
-      
+        function(s) {
+          // Initialize the Filter API
+          filter = new sigma.plugins.filter(s);
+
+          updatePane(s.graph, filter);
+
+          var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+
+          dragListener.bind('startdrag', function(event) {
+            console.log(event);
+          });
+          dragListener.bind('drag', function(event) {
+            console.log(event);
+          });
+          dragListener.bind('drop', function(event) {
+            console.log(event);
+          });
+          dragListener.bind('dragend', function(event) {
+            console.log(event);
+          });
+
+          function applyMinDegreeFilter(e) {
+            var v = e.target.value;
+            _.$('min-degree-val').textContent = v;
+
+            filter
+              .undo('min-degree')
+              .nodesBy(function(n) {
+                return this.degree(n.id) >= v;
+              }, 'min-degree')
+              .apply();
+          }
+
+          _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
+          _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+
+        });
       </script>
-
-      <div id="container">
+      
+      <br>
+      <div id="container-fluid">
+        <div class="alert alert-info content" style="margin-left: 10px; margin-right: 10px;">
+          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+          The graph below shows two-way protein-protein interactions. Proteins appear as nodes and interactions are depicted as undirected edges.
+        </div>
         <div id="graph-container"></div>
         <div id="control-pane">
-          <h2 class="underline">filters</h2>
           <div>
-            <h3>min degree: <span id="min-degree-val">0</span></h3>
-            0 <input id="min-degree" type="range" min="0" max="0" value="0"> <span id="max-degree-value">0</span><br>
+            <div class="row" style="text-align: center;">
+              <b>User the slider to adjust the minimum node degree.</b> (Current minimum degree: <span id="min-degree-val">0</span>)
+            </div>
+            <div class="row">
+              <div class="col-md-1 col-md-offset-4">
+                0
+              </div>
+              <div class="col-md-3">
+                <input id="min-degree" type="range" min="0" max="0" value="0">
+              </div>
+              <div class="col-md-1">
+                <span id="max-degree-value"></span>
+              </div>
+            </div>
           </div>
-          <span class="line"></span>
-          <div id="dump" class="hidden"></div>
         </div>
       </div>
 
-
       <?php
-        } // End of: if(!isset($_SESSION["uploadedGeneInteractions"]))
+        } // End of: if(!isset($_SESSION["uploadedGenes"]))
       ?>
-
 
   <?php include 'common/footer.php' ?>
   </body>
