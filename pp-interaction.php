@@ -1,69 +1,65 @@
-<?php include("common/start.php"); custom_start();
-
-  // Grab uploaded data if it was posted from index.php
-  if(isset($_POST["submit"]) && ($_POST["submit"] == "Upload")){
-    echo "<p>POST DATA:</p>";
-    var_dump($_POST);
-    // Store the list as an array in uploadGenes separated by newlines
-    $_SESSION["uploadedGenes"] = explode("\n", str_replace(array("\r\n","\n\r","\r"), "\n", $_POST["genesTextbox"]));
-  }
-?>
+<?php include("common/start.php"); custom_start(); ?>
 
 <html lang="en">
-  <?php include 'common/header.php' ?>
-  <?php include 'common/navbar.php' ?>
-
-<script src="js/sigma.js-1.2.0/src/sigma.core.js"></script>
-<script src="js/sigma.js-1.2.0/src/conrad.js"></script>
-<script src="js/sigma.js-1.2.0/src/utils/sigma.utils.js"></script>
-<script src="js/sigma.js-1.2.0/src/utils/sigma.polyfills.js"></script>
-<script src="js/sigma.js-1.2.0/src/sigma.settings.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.dispatcher.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.configurable.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.graph.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.camera.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.quad.js"></script>
-<script src="js/sigma.js-1.2.0/src/classes/sigma.classes.edgequad.js"></script>
-<script src="js/sigma.js-1.2.0/src/captors/sigma.captors.mouse.js"></script>
-<script src="js/sigma.js-1.2.0/src/captors/sigma.captors.touch.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.canvas.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.webgl.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.svg.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.utils.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.nodes.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.edges.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.edges.curve.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.labels.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.hovers.def.js"></script>
-<script src="js/sigma.js-1.2.0/src/middlewares/sigma.middlewares.rescale.js"></script>
-<script src="js/sigma.js-1.2.0/src/middlewares/sigma.middlewares.copy.js"></script>
-<script src="js/sigma.js-1.2.0/src/misc/sigma.misc.animation.js"></script>
-<script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindEvents.js"></script>
-<script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindDOMEvents.js"></script>
-<script src="js/sigma.js-1.2.0/src/misc/sigma.misc.drawHovers.js"></script>
-<script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
-<script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
-<script src="js/sigma.js-1.2.0/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
-<script src="js/sigma.js-1.2.0/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
-
+  <?php 
+    include 'common/header.php';
+    // Only import scripts if user has uploaded genes
+    if(isset($_SESSION["uploadedGenes"])){
+echo <<< EOT
+      <script src="js/sigma.js-1.2.0/src/sigma.core.js"></script>
+      <script src="js/sigma.js-1.2.0/src/conrad.js"></script>
+      <script src="js/sigma.js-1.2.0/src/utils/sigma.utils.js"></script>
+      <script src="js/sigma.js-1.2.0/src/utils/sigma.polyfills.js"></script>
+      <script src="js/sigma.js-1.2.0/src/sigma.settings.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.dispatcher.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.configurable.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.graph.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.camera.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.quad.js"></script>
+      <script src="js/sigma.js-1.2.0/src/classes/sigma.classes.edgequad.js"></script>
+      <script src="js/sigma.js-1.2.0/src/captors/sigma.captors.mouse.js"></script>
+      <script src="js/sigma.js-1.2.0/src/captors/sigma.captors.touch.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.canvas.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.webgl.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.svg.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/sigma.renderers.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.utils.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.edges.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.labels.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+      <script src="js/sigma.js-1.2.0/src/middlewares/sigma.middlewares.rescale.js"></script>
+      <script src="js/sigma.js-1.2.0/src/middlewares/sigma.middlewares.copy.js"></script>
+      <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.animation.js"></script>
+      <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindEvents.js"></script>
+      <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.bindDOMEvents.js"></script>
+      <script src="js/sigma.js-1.2.0/src/misc/sigma.misc.drawHovers.js"></script>
+      <script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/gexf-parser.js"></script>
+      <script src="js/sigma.js-1.2.0/plugins/sigma.parsers.gexf/sigma.parsers.gexf.js"></script>
+      <script src="js/sigma.js-1.2.0/plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
+      <script src="js/sigma.js-1.2.0/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+EOT;
+    }
+    include 'common/navbar.php';
+?>
 <style>
   body {
     color: #333;
@@ -115,10 +111,11 @@
 </style>
 
   <body>
+    <div class="container">
       <?php
         // Display notice if user has not uploaded anything
         if(!isset($_SESSION["uploadedGenes"])){
-          echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of gene interactions before continuing..</b></p></div>';
+          echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of genes before continuing..</b></p></div>';
         } else {
         // continue on if they have uploaded
           // Get an array of the unique genes
@@ -299,7 +296,7 @@
       <?php
         } // End of: if(!isset($_SESSION["uploadedGenes"]))
       ?>
-
+    </div>
   <?php include 'common/footer.php' ?>
   </body>
 </html>
