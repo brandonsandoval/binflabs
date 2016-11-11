@@ -1,0 +1,40 @@
+<br>
+<div id="container-fluid">
+  <div class="alert alert-info content" style="margin-left: 10px; margin-right: 10px;">
+    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    The graph below shows <b>transcription factor binding</b>. The edges show which transcription factors regulate which genes.
+  </div>
+  <div class="row">
+    <div id="graph-container"></div>
+  </div>
+    <div class=" col-md-offset-2 col-md-3">
+      <span class="glyphicon glyphicon-one-fine-dot" style="color:#3333ff;" aria-hidden="true"></span> Uploaded transcription factor
+    </div>
+    <div class="col-md-2">
+      <span class="glyphicon glyphicon-one-fine-dot" style="color:#ffe066;" aria-hidden="true"></span> Transcription factor
+    </div>
+    <div class="col-md-1">   
+      <span class="glyphicon glyphicon-one-fine-dot" style="color:#27b382;" aria-hidden="true"></span> Gene
+    </div>
+    <div class="col-md-2">
+      <span class="glyphicon glyphicon-one-fine-dot" style="color:#ff1a1a;" aria-hidden="true"></span> Uploaded gene
+    </div>
+  <div class="row">
+    <div id="control-pane">
+      <div style="text-align: center;">
+        <b>User the slider to adjust the minimum node degree.</b> (Current minimum degree: <span id="min-degree-val">0</span>)
+      </div>
+      <div class="row">
+        <div class="col-md-1 col-md-offset-4">
+          0
+        </div>
+        <div class="col-md-3">
+          <input id="min-degree" type="range" min="0" max="0" value="0">
+        </div>
+        <div class="col-md-1">
+          <span id="max-degree-value"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
