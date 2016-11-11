@@ -1,11 +1,27 @@
 <?php include("common/start.php"); custom_start();
   // Get GET variable to set the lab/condition we are working with
   if(isset($_GET['lab']) && isset($_GET['cond'])){
+    $getValid = false;
     $lab = $_GET['lab'];
     $cond = $_GET['cond'];
     $labCond = $lab.'_'.$cond;
+    // Make sure the GET inputs are valid
+    if($lab == 'causton'){
+      if($cond == 'acid' || $cond == 'alkali' || $cond == 'h2o2' || $cond == 'heat' || $cond == 'salt' || $cond == 'sorbitol'){
+        $getValid = true;
+      }
+    } else if($lab == 'gasch'){
+      if($cond == 'diamide' || $cond == 'h2o2' || $cond == 'heat' || $cond == 'hyperosmotic' || $cond == 'hypoosmotic' || $cond == 'menadione'){
+        $getValid = true;
+      }
+    }
+    if(!$getValid){
+      echo "Error, invalid GET param value";
+      exit;
+    }
   }else{
     // Exit if a link request did not provide a lab and condition
+    echo "Error, GET params are not valid";
     exit;
   }
   // If data was uploaded and we have not grabbed the expression *.tab data
@@ -48,7 +64,7 @@
     }
     // Compute the highest and lowest sum totals gene by the sum of there values
     // We will show these in a table
-    $highestSum = 0;
+    $highestSum = -99999999;
     $lowestSum = 99999999;
     foreach($_SESSION['expression_'.$labCond.'_sum'] as $geneName => $geneSum){
       if($geneSum > $highestSum){

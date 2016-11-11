@@ -27,7 +27,7 @@ if($_POST["submit"] == "submitText"){
     exit;
   }
 }else{
-  header('Location: index.php');
+  header('Location: ../binflabs');
   exit;
 }
 
@@ -36,34 +36,44 @@ foreach($_SESSION["uploadedGenesRaw"] as $gene){
   // Only accept alpha-numeric and "(", ")", "-" characters
   $acceptable = array('-');
   if(ctype_alnum(str_replace($acceptable, '', $gene))){
-    $line = null;
-    $line = exec('grep -P "\\t'.$gene.'\\t" data/orf2std.tab');
-    // If grep passes, then we must have a valid gene
-    if($line){
-      // Create the array if it does not exist
+    // We are going to check if the input is a valid id, standard, or systematic name
+    $lineID = null;
+    $lineSys = null;
+    $lineStd = null;
+    $lineID = exec('grep -P "^'.$gene.'\\t" data/orf2std.tab');
+    $lineSys = exec('grep -P "\\t'.$gene.'\\t" data/orf2std.tab');
+    $lineStd = exec('grep -P "\\t'.$gene.'$" data/orf2std.tab');
+    // Create the array if we have a valid line and it does not exist
+    if($lineID || $lineSys || $lineStd){
       if(!isset($_SESSION["uploadedGenes"])){
         $_SESSION["uploadedGenes"] = array();
       }
+    }
+    // Add the correct formatted gene to the list
+    if($lineID){
+      if(preg_match("/^".$gene."\t(.*)\t(.*)$/", $lineID, $match)){
+        array_push($_SESSION["uploadedGenes"], $match[1]);
+      }else{
+        echo "Input error";
+        session_destroy();
+        exit;
+      }
+    }else if($lineSys){
       array_push($_SESSION["uploadedGenes"], $gene);
+    }else if($lineStd){
+      if(preg_match("/^(.*)\t(.*)\t".$gene."$/", $lineStd, $match)){
+        array_push($_SESSION["uploadedGenes"], $match[2]);
+      }else{
+        echo "Input error";
+        session_destroy();
+        exit;
+      }
     }
   }
   // $line = shell_exec('egrep "'.$gene.'" data/expression/'.$lab.'_'.$cond.'.tab');
 }
 
 // Go back to index.php
-header('Location: index.php');
+header('Location: ../binflabs');
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
