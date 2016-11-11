@@ -59,56 +59,9 @@ echo <<< EOT
 EOT;
   }
   include 'common/navbar.php';
+  include 'interactions/tf-interaction-scripts.js';
+  include 'interactions/graph-styles.html';
 ?>
-<style>
-  body {
-    color: #333;
-    font-size: 14px;
-  }
-  #graph-container {
-    height: 70%;
-    left: 25%;
-    width: 50%;
-    background-color: #d9edf7;
-    border-radius: 4px;
-    position: absolute;
-    border: 1px solid #bce8f1;
-  }
-  #control-pane {
-    top: 91%;
-    position: absolute;
-    left: 25%;
-    width: 50%;
-    background-color: rgb(249, 247, 237);
-  }
-  #control-pane > div {
-    margin: 10px;
-  }
-  h2, h3, h4 {
-    padding: 0;
-    font-variant: small-caps;
-  }
-  h2.underline {
-    color: #437356;
-    background: #f4f0e4;
-    margin: 0;
-    border-radius: 2px;
-    padding: 8px 12px;
-    font-weight: 700;
-  }
-  .hidden {
-    display: none;
-    visibility: hidden;
-  }
-  .content {
-    text-align: center;
-  }
-
-  input[type=range] {
-    width: 160px;
-  }
-
-</style>
 
   <body>
     <div class="container">
@@ -118,20 +71,28 @@ EOT;
           echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of genes before continuing..</b></p></div>';
         } else {
         // continue on if they have uploaded
+          $relevant_interactions = [];
+          foreach ($_SESSION["uploadedGenes"] as $gene) {
+            $relevant_interactions = array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("grep \"$gene\" data/interactions/tfbinds.tab")))));
+          }
+
           // Get an array of the unique TFs
           $string_of_tfs = " ";
-          foreach ($_SESSION["uploadedGenes"] as $interaction) {
+          foreach ($relevant_interactions as $interaction) {
+            var_dump($interaction);
             $string_of_tfs .= preg_replace('/\s+.*/', ' ', $interaction) . ' ';
           }
           $array_of_tfs = explode("\n", trim(shell_exec("echo $string_of_tfs | tr ' ' '\n' | sort | uniq")));
 
           // Get an array of the unique genes
           $string_of_genes = " ";
-          foreach ($_SESSION["uploadedGenes"] as $interaction) {
-            $string_of_genes .= preg_replace('/.*?\s+/', ' ', $interaction) . ' ';
+          foreach ($relevant_interactions as $interaction) {
+            $string_of_genes .= preg_replace('/.*\s+/', ' ', $interaction) . ' ';
           }
           $array_of_genes = explode("\n", trim(shell_exec("echo $string_of_genes | tr ' ' '\n' | sort | uniq")));
+
           // Create the data for the graph
+          var_dump($array_of_tfs);
           $angle_differece = 2*pi()/(count($array_of_genes)+count($array_of_tfs));   //Used to calculate the positions of the nodes
 
           $count = 1;
@@ -145,137 +106,13 @@ EOT;
             $count++;
           }
           $file_contents .= '</nodes><edges>';
-          foreach ($_SESSION["uploadedGenes"] as $interaction) {
+          foreach ($relevant_interactions as $interaction) {
             $interaction = preg_replace('/\s+/', ' ', $interaction);
             $file_contents .= '<edge source="' . strstr($interaction, ' ', true) . '" target="' . trim(strstr($interaction, ' ')) . '"></edge>';
           }
           $file_contents .= '</edges></graph></gexf>';
           file_put_contents('js/sigma.js-1.2.0/data/tf-interactions.gexf', $file_contents);
       ?>
-
-      <script>
-        var filter;
-
-        /**
-         * DOM utility functions
-         */
-        var _ = {
-          $: function (id) {
-            return document.getElementById(id);
-          },
-
-          all: function (selectors) {
-            return document.querySelectorAll(selectors);
-          },
-
-          removeClass: function(selectors, cssClass) {
-            var nodes = document.querySelectorAll(selectors);
-            var l = nodes.length;
-            for ( i = 0 ; i < l; i++ ) {
-              var el = nodes[i];
-              // Bootstrap compatibility
-              el.className = el.className.replace(cssClass, '');
-            }
-          },
-
-          addClass: function (selectors, cssClass) {
-            var nodes = document.querySelectorAll(selectors);
-            var l = nodes.length;
-            for ( i = 0 ; i < l; i++ ) {
-              var el = nodes[i];
-              // Bootstrap compatibility
-              if (-1 == el.className.indexOf(cssClass)) {
-                el.className += ' ' + cssClass;
-              }
-            }
-          },
-
-          show: function (selectors) {
-            this.removeClass(selectors, 'hidden');
-          },
-
-          hide: function (selectors) {
-            this.addClass(selectors, 'hidden');
-          },
-
-          toggle: function (selectors, cssClass) {
-            var cssClass = cssClass || "hidden";
-            var nodes = document.querySelectorAll(selectors);
-            var l = nodes.length;
-            for ( i = 0 ; i < l; i++ ) {
-              var el = nodes[i];
-              //el.style.display = (el.style.display != 'none' ? 'none' : '' );
-              // Bootstrap compatibility
-              if (-1 !== el.className.indexOf(cssClass)) {
-                el.className = el.className.replace(cssClass, '');
-              } else {
-                el.className += ' ' + cssClass;
-              }
-            }
-          }
-        };
-
-
-        function updatePane (graph, filter) {
-          // get max degree
-          var maxDegree = 0;
-          
-          // read nodes
-          graph.nodes().forEach(function(n) {
-            maxDegree = Math.max(maxDegree, graph.degree(n.id));
-          })
-
-          // min degree
-          _.$('min-degree').max = maxDegree;
-          _.$('max-degree-value').textContent = maxDegree;
-        }
-
-        // Initialize sigma with the dataset:
-        sigma.parsers.gexf('js/sigma.js-1.2.0/data/tf-interactions.gexf', {
-          container: 'graph-container',
-          settings: {
-            edgeColor: 'default',
-            defaultEdgeColor: '#ccc'
-          }
-        },
-
-        function(s) {
-          // Initialize the Filter API
-          filter = new sigma.plugins.filter(s);
-
-          updatePane(s.graph, filter);
-
-          var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
-
-          dragListener.bind('startdrag', function(event) {
-            console.log(event);
-          });
-          dragListener.bind('drag', function(event) {
-            console.log(event);
-          });
-          dragListener.bind('drop', function(event) {
-            console.log(event);
-          });
-          dragListener.bind('dragend', function(event) {
-            console.log(event);
-          });
-
-          function applyMinDegreeFilter(e) {
-            var v = e.target.value;
-            _.$('min-degree-val').textContent = v;
-
-            filter
-              .undo('min-degree')
-              .nodesBy(function(n) {
-                return this.degree(n.id) >= v;
-              }, 'min-degree')
-              .apply();
-          }
-
-          _.$('min-degree').addEventListener("input", applyMinDegreeFilter);  // for Chrome and FF
-          _.$('min-degree').addEventListener("change", applyMinDegreeFilter); // for IE10+
-        });
-      </script>
       
       <br>
       <div id="container-fluid">
