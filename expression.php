@@ -25,10 +25,10 @@
     exit;
   }
   // If data was uploaded and we have not grabbed the expression *.tab data
-  if(isset($_SESSION["uploadedGenes"]) && !isset($_SESSION["computedExpression_".$labCond])){
-    foreach($_SESSION["uploadedGenes"] as $gene){
+  if(isset($_SESSION["uploadedGenes"])){
+    foreach($_SESSION["uploadedGenes".$_SESSION["namespace"]] as $key => $gene){
       // Get line from .tab file that corresponds to the gene
-      $line = shell_exec('egrep "'.$gene.'" data/expression/'.$lab.'_'.$cond.'.tab');
+      $line = shell_exec('egrep "'.$_SESSION["uploadedGenesSys"][$key].'" data/expression/'.$lab.'_'.$cond.'.tab');
       // strip out unwanted space chars
       $lineClean = preg_replace("/ /", "", $line);
       
@@ -40,13 +40,13 @@
           // convert array to floats, convert nulls to 0's
           // If null
           if($value[0] == 'N'){
-            $_SESSION['expression_'.$labCond][$gene][$j] = 0;
+            $expression[$labCond][$gene][$j] = 0;
           }else{
-            $_SESSION['expression_'.$labCond][$gene][$j] = floatval($value);
+            $expression[$labCond][$gene][$j] = floatval($value);
           }
         }else{
           // For the first element, we store its gene name instead of its value
-          $_SESSION['expression_'.$labCond][$gene][0] = $values[0];
+          $expression[$labCond][$gene][0] = $gene;
         }
         $j++;
       }
@@ -54,11 +54,11 @@
       $j = 0;
       // Calculate there sums across values, i.e. 0m, 20m 40m etc.
       // so it can be displayed in a bar chart.
-      $_SESSION['expression_'.$labCond.'_sum'][$gene] = 0;
-      foreach($_SESSION['expression_'.$labCond][$gene] as $value){
+      $expression[$labCond.'_sum'][$gene] = 0;
+      foreach($expression[$labCond][$gene] as $value){
         // Skip the first value, because that is only a counter, not a value
         if($j++ != 0){
-          $_SESSION['expression_'.$labCond.'_sum'][$gene] += $value;
+          $expression[$labCond.'_sum'][$gene] += $value;
         }
       }
     }
@@ -66,7 +66,7 @@
     // We will show these in a table
     $highestSum = -99999999;
     $lowestSum = 99999999;
-    foreach($_SESSION['expression_'.$labCond.'_sum'] as $geneName => $geneSum){
+    foreach($expression[$labCond.'_sum'] as $geneName => $geneSum){
       if($geneSum > $highestSum){
         $highestSum = $geneSum;
         $highestGeneName = $geneName;
@@ -76,10 +76,8 @@
         $lowestGeneName = $geneName;
       }
     }
-    $_SESSION['expression_'.$labCond.'_highest'] = $highestGeneName;
-    $_SESSION['expression_'.$labCond.'_lowest'] = $lowestGeneName;
-    // Set this true, so we don't have to recompute if the data doesn't change.
-    $_SESSION["computedExpression_".$labCond] = true;
+    $expression[$labCond.'_highest'] = $highestGeneName;
+    $expression[$labCond.'_lowest'] = $lowestGeneName;
   }
 
   echo '<html lang="en">';
@@ -125,7 +123,7 @@ EOT;
               echo "['Genes', '10m', '20m', '30m', '40m', '50m', '80m', '105m', '120m', '160m'],";
             }
           }
-          foreach($_SESSION['expression_'.$labCond] as $values){
+          foreach($expression[$labCond] as $values){
             echo json_encode($values).',';
           }
 echo <<< EOT
@@ -142,7 +140,7 @@ EOT;
   
   // Display notice if user has not uploaded anything
   if(!isset($_SESSION["uploadedGenes"])){
-    echo '<div class="inner-container"><p><b>Please <a href="index.php">upload</a> a list of genes before continuing..</b></p></div>';
+    echo '<div class="inner-container"><p><b>Please <a href="../binflabs">upload</a> a list of genes before continuing..</b></p></div>';
   } else {
   // continue on if they have uploaded
     echo '<center><br/>';
@@ -190,11 +188,11 @@ echo <<< EOT
       <tbody>
 EOT;
     // List the highest sum total gene in table
-    $geneHighest = $_SESSION["expression_".$labCond."_highest"];
+    $geneHighest = $expression[$labCond."_highest"];
     echo '<tr><th><span class="glyphicon glyphicon-menu-up"></span>'.$geneHighest.'</th>';
-    echo '<th>'.$_SESSION["expression_".$labCond."_sum"][$geneHighest].'</th>';
+    echo '<th>'.$expression[$labCond."_sum"][$geneHighest].'</th>';
     $i = 0;
-    foreach($_SESSION["expression_".$labCond][$geneHighest] as $value){
+    foreach($expression[$labCond][$geneHighest] as $value){
       if($i != 0) // Skip the first one as it is a counter
         echo '<th>'.$value.'</th>';
       $i++;
@@ -202,11 +200,11 @@ EOT;
     echo '</tr>';
     
     // and the lowest sum total
-    $geneLowest = $_SESSION["expression_".$labCond."_lowest"];
+    $geneLowest = $expression[$labCond."_lowest"];
     echo '<tr><th><span class="glyphicon glyphicon-menu-down"></span>'.$geneLowest.'</th>';
-    echo '<th>'.$_SESSION["expression_".$labCond."_sum"][$geneLowest].'</th>';
+    echo '<th>'.$expression[$labCond."_sum"][$geneLowest].'</th>';
     $i = 0;
-    foreach($_SESSION["expression_".$labCond][$geneLowest] as $value){
+    foreach($expression[$labCond][$geneLowest] as $value){
       if($i != 0) // Skip the first one as it is a counter
         echo '<th>'.$value.'</th>';
       $i++;
