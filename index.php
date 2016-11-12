@@ -47,10 +47,11 @@
           }else if($_SESSION["namespace"] == "Std"){
             $fullnamespace = "Standard Name";
           }
+          
           echo '</ul><a href="delete.php" class="btn btn-danger" role="button">Remove all</a></div>';
           echo '<div class="inner-container well">';
           echo '<p><b>Namespace</b><br/>';
-          echo 'Choose a namespace, currently using <b>'.$fullnamespace.'</b>, examples given below</p><br/>';
+          echo 'Choose a namespace, currently using <b>'.$fullnamespace.'</b><br/>An example for TFC3(YAL001C) given below<p><br/>';
       ?>
   <table class="table" style="font-size: 14px;">
     <tr>
@@ -80,7 +81,7 @@
             <textarea type="text" class="form-control" rows="10" id="genesTextbox" name="genesTextbox"></textarea>
           </div>
           <button class="btn btn-primary" type="submit" value="submitText" name="submit">Upload</button>
-          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myHelp">Help</button>
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myHelp">Info</button>
         </form>
         <br/><p><b>OR</b></p>
         <p><b>Upload a list of genes</b> (10kb limit, only .txt files with genes separated by newlines)</p>
@@ -88,7 +89,7 @@
           <input class="btn btn-default" type="file" name="uploadedfile" id="uploadedfile">
           <br/>
           <button class="btn btn-primary" type="submit" value="submitFile" name="submit">Upload</button>
-          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myHelp">Help</button>
+          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myHelp">Info</button>
         </form>
       </div>
 
