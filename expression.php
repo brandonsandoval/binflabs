@@ -26,6 +26,46 @@
   }
   // If data was uploaded and we have not grabbed the expression *.tab data
   if(isset($_SESSION["uploadedGenes"])){
+  
+    // For requesting download link
+    if(isset($_GET['download']) && $_GET['download'] == 'true'){
+      // Provide a downloadable text file
+      header('Content-type: text/plain');
+      header("Content-Disposition: attachment; filename=".$labCond.".tab");
+      
+      $line = shell_exec('head -1 data/expression/'.$lab.'_'.$cond.'.tab');
+      // strip out unwanted space chars
+      $lineClean = preg_replace("/  /", "", $line);
+      echo $lineClean;
+      foreach($_SESSION["uploadedGenesSys"] as $key => $gene){
+        // Get line from .tab file that corresponds to the gene
+        $line = shell_exec('egrep "'.$_SESSION["uploadedGenesSys"][$key].'" data/expression/'.$lab.'_'.$cond.'.tab');
+        // strip out unwanted space chars and newlines
+        $lineClean = preg_replace("/ /", "", $line);
+        $lineClean = preg_replace("/\n/", "", $lineClean);
+        // Change gene to current namespace
+        $lineArray = explode("\t",$lineClean);
+        $i = 0;
+        $size = sizeof($lineArray);
+        foreach($lineArray as $item){
+          if($i++ == 0){
+            // For first line print the correct namespace instead of the default gene
+            $key = array_search($item, $_SESSION['uploadedGenesSys']);
+            echo $_SESSION['uploadedGenes'.$_SESSION['namespace']][$key]."\t";
+          }else if($i == $size){
+            // For the last line add a newline at the end
+            echo $item."\n";
+          
+          }else{
+            // For each non-first and non-last line, and the \t delimiter.
+            echo $item."\t";
+          }
+        }
+      }
+      exit; // Download success
+    }
+  
+  
     foreach($_SESSION["uploadedGenes".$_SESSION["namespace"]] as $key => $gene){
       // Get line from .tab file that corresponds to the gene
       $line = shell_exec('egrep "'.$_SESSION["uploadedGenesSys"][$key].'" data/expression/'.$lab.'_'.$cond.'.tab');
@@ -214,9 +254,10 @@ EOT;
 echo <<< EOT
       </tbody>
     </table>
-    <h6>*(Note: NULLs in dataset are treated as 0)</h6>
+    <h6>*(Note: NULLs and Blanks in dataset are treated as 0s in table/chart)</h6>
+    <p>Download link for all uploaded gene table results</p>
 EOT;
-    echo '<button type="button" class="btn btn-primary">Download  all '.$lab.' '.$cond.' results</button>';
+    echo '<a href="expression.php?download=true&lab='.$lab.'&cond='.$cond.'" class="btn btn-default" role="button">Download '.$labCond.'.tab</a>';
 
   } // End of: if(!isset($_SESSION["uploadedGenes"]))
 
