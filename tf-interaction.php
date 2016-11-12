@@ -53,7 +53,7 @@
             foreach ($array_of_tfs as $tf) {
               $namespace_tf = $tf;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_tf = trim(shell_exec("grep \"\t$tf\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_tf = trim(shell_exec("grep -P \"\t$tf\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_tf)) $namespace_tf = $tf;
               if ($graph_style == "Random") {
@@ -70,7 +70,7 @@
             foreach ($array_of_genes as $gene) {
               $namespace_gene = $gene;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_gene = trim(shell_exec("grep \"\t$gene\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_gene = trim(shell_exec("grep -P \"\t$gene\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_gene)) $namespace_gene = $gene;
               if ($graph_style == "Random") {
@@ -92,8 +92,8 @@
               $namespace_source = $source;
               $namespace_target = $target;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_source = trim(shell_exec("grep \"\t$source\t\" data/orf2std.tab | cut -f" . $field));
-                $namespace_target = trim(shell_exec("grep \"\t$target\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_source = trim(shell_exec("grep -P \"\t$source\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_target = trim(shell_exec("grep -P \"\t$target\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_source)) $namespace_source = $source;
               if (empty($namespace_target)) $namespace_target = $target;
