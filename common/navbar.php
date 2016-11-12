@@ -67,9 +67,9 @@
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Change Namespace <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="namespace.php?namespace=ID"><b>SGD ID</b> (e.g. S000000001)</a></th>
-          <li><a href="namespace.php?namespace=Sys"><b>Systematic Name</b> (e.g. YAL001C)</a></th>
-          <li><a href="namespace.php?namespace=Std"><b>Standard Name</b> (e.g. TFC3)</a></th>
+          <li><a href="namespace.php?namespace=ID&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>SGD ID</b> (e.g. S000000001)</a></th>
+          <li><a href="namespace.php?namespace=Sys&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>Systematic Name</b> (e.g. YAL001C)</a></th>
+          <li><a href="namespace.php?namespace=Std&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>Standard Name</b> (e.g. TFC3)</a></th>
         </ul>
       </li>
     </ul>

@@ -1,7 +1,7 @@
 <?php include("common/start.php"); custom_start();
 
   // Changes the namespace from ID, systematic or standard name
-  if(isset($_GET['namespace'])){
+  if(isset($_GET['namespace']) && isset($_GET['return'])){
     $getValid = false;
     $namespace = $_GET['namespace'];
     // Make sure the GET inputs are valid
@@ -22,6 +22,6 @@
   }
 
 // Go back to index.php
-header('Location: ../binflabs');
+header('Location: '.$_GET['return']);
 ?>
 
