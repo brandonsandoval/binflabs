@@ -40,33 +40,35 @@
             // Create the data for the graph
             $angle_differece = 2*pi()/count($array_of_genes);   //Used to calculate the positions of the nodes
             $count = 1;
-            $file_contents = '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="undirected" mode="static"><nodes>';
+            $file_contents = '<?xml version="1.0" encoding="UTF-8"?><gexf xmlns:viz="http://www.gexf.net/1.2draft/viz"><graph defaultedgetype="undirected" mode="static"><nodes>' . "\n";
 
-            // Create nodes - convert them to the correct namespace
+            // Create nodes for genes - convert them to the correct namespace
             foreach ($array_of_genes as $gene) {
               $namespace_gene = $gene;
               if ($_SESSION["namespace"] != "Sys") {
                 $namespace_gene = trim(shell_exec("grep \"$gene\" data/orf2std.tab | egrep -o \"$search_regex\""));
               }
               if (empty($namespace_gene)) $namespace_gene = $gene;
-              if (in_array($gene, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="26" g="26" r="255"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>';
-              else $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>';
+              if (in_array($gene, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="251" g="51" r="51"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
+              else $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="102" g="224" r="255"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
               $count++;
             }
-            $file_contents .= '</nodes><edges>';
-            
+            $file_contents .= '</nodes><edges>' . "\n";
+
             // Create edges - convert them to the correct namespace
             foreach ($relevant_interactions as $interaction) {
               $interaction = preg_replace('/\s+/', ' ', $interaction);
               $source = strstr($interaction, ' ', true);
               $target = trim(strstr($interaction, ' '));
+              $namespace_source = $source;
+              $namespace_target = $target;
               if ($_SESSION["namespace"] != "Sys") {
                 $namespace_source = trim(shell_exec("grep \"$source\" data/orf2std.tab | egrep -o \"$search_regex\""));
                 $namespace_target = trim(shell_exec("grep \"$target\" data/orf2std.tab | egrep -o \"$search_regex\""));
               }
               if (empty($namespace_source)) $namespace_source = $source;
               if (empty($namespace_target)) $namespace_target = $target;
-              $file_contents .= '<edge source="' . $namespace_source . '" target="' . $namespace_target . '"></edge>';
+              $file_contents .= '<edge source="' . $namespace_source . '" target="' . $namespace_target . '"></edge>' . "\n";
             }
 
             $file_contents .= '</edges></graph></gexf>';
