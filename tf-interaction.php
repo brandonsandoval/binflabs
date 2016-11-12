@@ -22,10 +22,12 @@
 
           // Find the relevant lines in the tfbinds.tab file
           $relevant_interactions = array();
+          $contents = "";
           foreach ($_SESSION["uploadedGenesSys"] as $gene) {
             $relevant_interactions = array_filter(array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/tfbinds.tab"))))));
-            file_put_contents('interactions/tf-interactions.tab', trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/tfbinds.tab")));
+            $contents .= shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/tfbinds.tab");
           }
+          file_put_contents('interactions/tf-interactions.tab', $contents);
 
           if (empty($relevant_interactions)) {
             include 'interactions/tf-interaction-error-view.html';
@@ -49,7 +51,7 @@
             foreach ($array_of_tfs as $tf) {
              $namespace_tf = $tf;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_tf = trim(shell_exec("grep -P \"\\t$tf\\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_tf = trim(shell_exec("grep -P \"\t$tf\\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_tf)) $namespace_tf = $tf;
               if (in_array($tf, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_tf . '" label="' . $namespace_tf . '"><viz:size value="100"></viz:size><viz:color b="251" g="51" r="51"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";

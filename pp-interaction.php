@@ -22,10 +22,12 @@
 
           // Find the relevant lines in the ppi.tab file
           $relevant_interactions = array();
+          $contents = "";
           foreach ($_SESSION["uploadedGenesSys"] as $gene) {
             $relevant_interactions = array_filter(array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/ppi.tab"))))));
-            file_put_contents('interactions/pp-interactions.tab', trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/ppbinds.tab")));
+            $contents .= shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/ppi.tab");
           }
+          file_put_contents('interactions/pp-interactions.tab', $contents);
 
           if (empty($relevant_interactions)) {
             include 'interactions/pp-interaction-error-view.html';

@@ -58,6 +58,16 @@
       ?>>
       <a href="about.php">About</a></li>
     </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Change Namespace <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="namespace.php?namespace=ID"><b>SGD ID</b> (e.g. S000000001)</a></th>
+          <li><a href="namespace.php?namespace=Sys"><b>Systematic Name</b> (e.g. YAL001C)</a></th>
+          <li><a href="namespace.php?namespace=Std"><b>Standard Name</b> (e.g. TFC3)</a></th>
+        </ul>
+      </li>
+    </ul>
 
   </div>
 </div><!--/.nav-collapse -->
