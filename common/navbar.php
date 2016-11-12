@@ -11,10 +11,16 @@
   </div>
   <div id="navbar" class="collapse navbar-collapse">
     <ul class="nav navbar-nav">
+    
       <li<?php
         if(basename($_SERVER['PHP_SELF']) == 'index.php') echo " class=\"active\"";
       ?>>
       <a href="../binflabs">Upload</a></li>
+      
+      <li<?php
+        if(basename($_SERVER['PHP_SELF']) == 'properties.php') echo " class=\"active\"";
+      ?>>
+      <a href="properties.php">Properties</a></li>
       
       <li class="dropdown <?php if(basename($_SERVER['PHP_SELF']) == 'expression.php') echo "active"; ?>">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Expression<span class="caret"></span></a>
