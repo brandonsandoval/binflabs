@@ -6,7 +6,7 @@
   <?php include 'common/header.php' ?>
 
   <body>
-    <?php include 'common/navbar.php' ?>
+    <?php include 'common/navbar.php'; ?>
 
     <div class="container">
       <!-- Help box -->
@@ -33,6 +33,7 @@
       <?php
         // Show a list of already uploaded genes
         if(isset($_SESSION["uploadedGenes"])) {
+          echo '<div class="row">';
           echo '<div class="inner-container well">';
           echo '<p><b>Current gene list</b>';
           echo '<br/>You can now go to Expression, Interactions... in the navbar above</p>';
@@ -49,28 +50,32 @@
           }
           
           echo '</ul><a href="delete.php" class="btn btn-danger" role="button">Remove all</a></div>';
+          /*
           echo '<div class="inner-container well">';
           echo '<p><b>Namespace</b><br/>';
-          echo 'Choose a namespace, currently using <b>'.$fullnamespace.'</b><br/>An example for TFC3(YAL001C) given below<p><br/>';
+          echo 'Choose a namespace, currently using <b>'.$fullnamespace.'</b><br/>An example for TFC3(YAL001C) given below<p><br/>';*/
       ?>
+<!--
   <table class="table" style="font-size: 14px;">
-    <tr>
-      <th>SGD ID</th>
-      <th>Systematic Name</th>
-      <th>Standard Name</th>
+    <tr style="width:33%;">
+      <th style="width:33%; font-weight: normal;">SGD ID</th>
+      <th style="width:33%; font-weight: normal;">Systematic Name</th>
+      <th style="width:33%; font-weight: normal;">Standard Name</th>
     </tr>
-    <tr>
-      <th>S000000001</th>
-      <th>YAL001C</th>
-      <th>TFC3</th>
+    <tr style="width:33%; font-weight: normal;">
+      <th style="width:33%; font-weight: normal;">S000000001</th>
+      <th style="width:33%; font-weight: normal;">YAL001C</th>
+      <th style="width:33%; font-weight: normal;">TFC3</th>
     </tr>
-    <tr>
-      <th><a href="namespace.php?namespace=ID" class="btn btn-default btn-sm" role="button">Set</a></th>
-      <th><a href="namespace.php?namespace=Sys" class="btn btn-default btn-sm" role="button">Set</a></th>
-      <th><a href="namespace.php?namespace=Std" class="btn btn-default btn-sm" role="button">Set</a></th>
+    <tr style="width:33%; font-weight: normal;">
+      <th style="width:33%; font-weight: normal;"><a href="namespace.php?namespace=ID" class="btn btn-default btn-sm" role="button">Set</a></th>
+      <th style="width:33%; font-weight: normal;"><a href="namespace.php?namespace=Sys" class="btn btn-default btn-sm" role="button">Set</a></th>
+      <th style="width:33%; font-weight: normal;"><a href="namespace.php?namespace=Std" class="btn btn-default btn-sm" role="button">Set</a></th>
     </tr>
   </table>
+  
 </div>
+-->
           <?php
         }
       ?>
@@ -91,6 +96,7 @@
           <button class="btn btn-primary" type="submit" value="submitFile" name="submit">Upload</button>
           <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myHelp">Info</button>
         </form>
+      </div>
       </div>
 
     </div><!-- /.container -->
