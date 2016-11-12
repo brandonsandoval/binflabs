@@ -19,7 +19,9 @@
         } else {  
           if ($_SESSION["namespace"] == 'ID') $field = 1;
           if ($_SESSION["namespace"] == 'Std') $field = 3;
-
+          if (isset($_GET['graph_style'])) $graph_style = $_GET['graph_style'];
+          else $graph_style = "Random";
+          
           // Find the relevant lines in the ppi.tab file
           $relevant_interactions = array();
           $contents = "";
@@ -48,12 +50,17 @@
             foreach ($array_of_genes as $gene) {
               $namespace_gene = $gene;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_gene = trim(shell_exec("grep -P \"\t$gene\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_gene = trim(shell_exec("grep \"\t$gene\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_gene)) $namespace_gene = $gene;
-              if (in_array($gene, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="26" g="26" r="255"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
-              else $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="100"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
-              $count++;
+              if ($graph_style == "Random") {
+                if (in_array($gene, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="60"></viz:size><viz:color b="26" g="26" r="255"/><viz:position x="' . rand(0,2800) . '" y="' . rand(0,1000) . '"></viz:position></node>' . "\n";
+                else $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="50"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . rand(0,2800) . '" y="' . rand(0,1000) . '"></viz:position></node>' . "\n";
+              } else {
+                if (in_array($gene, $_SESSION["uploadedGenesSys"])) $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="60"></viz:size><viz:color b="26" g="26" r="255"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
+                else $file_contents .= '<node id="' . $namespace_gene . '" label="' . $namespace_gene . '"><viz:size value="50"></viz:size><viz:color b="130" g="179" r="39"/><viz:position x="' . 1000*sin(2*pi()-$angle_differece*$count) . '" y="' . 1000*cos(2*pi()-$angle_differece*$count) . '"></viz:position></node>' . "\n";
+                $count++;
+              }
             }
             $file_contents .= '</nodes><edges>' . "\n";
 
@@ -65,8 +72,8 @@
               $namespace_source = $source;
               $namespace_target = $target;
               if ($_SESSION["namespace"] != "Sys") {
-                $namespace_source = trim(shell_exec("grep -P \"\t$source\t\" data/orf2std.tab | cut -f" . $field));
-                $namespace_target = trim(shell_exec("grep -P \"\t$target\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_source = trim(shell_exec("grep \"\t$source\t\" data/orf2std.tab | cut -f" . $field));
+                $namespace_target = trim(shell_exec("grep \"\t$target\t\" data/orf2std.tab | cut -f" . $field));
               }
               if (empty($namespace_source)) $namespace_source = $source;
               if (empty($namespace_target)) $namespace_target = $target;

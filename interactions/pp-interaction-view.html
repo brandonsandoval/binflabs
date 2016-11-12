@@ -7,12 +7,14 @@
   <div class="row">
     <div id="graph-container"></div>
   </div>
-    <div class="col-md-3 col-md-offset-4">
+  <div style="top: 84%; left: 38%; width: 45%; position: absolute;">
+    <div class="col-md-4">
       <span class="glyphicon glyphicon-one-fine-dot" style="color:#ff1a1a;" aria-hidden="true"></span> Uploaded gene
     </div>
     <div class="col-md-2">   
       <span class="glyphicon glyphicon-one-fine-dot" style="color:#27b382;" aria-hidden="true"></span> Gene
     </div>
+  </div>
   <div class="row">
     <div id="control-pane">
       <div style="text-align: center;">
@@ -29,6 +31,16 @@
           <span id="max-degree-value"></span>
         </div>
       </div>
+    </div>
+    <div class="dropup" style="position: absolute; top: 93%; left: 78%;">
+      <button class="btn btn-default dropdown-toggle" type="button" id="graph_style" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Graph Style
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="graph_style">
+        <li><a href="pp-interaction.php?graph_style=circular">Circular</a></li>
+        <li><a href="pp-interaction.php">Random</a></li>
+      </ul>
     </div>
   </div>
 </div>
