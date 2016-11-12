@@ -4,8 +4,7 @@
 <html lang="en">
   <?php include 'common/header.php' ?>
   <body>
-    <?php include 'common/navbar.php';
-    include 'properties/sgd_pathways-styles.html'; ?>
+    <?php include 'common/navbar.php'; ?>
     
     <div class="container">
       <?php
@@ -52,7 +51,7 @@ EOT;
             $ec_number = $match[3];
             $gene_name = $match[4];
             $reference = $match[5];
-            if (! $_SESSION["namespace"] != 'Std') $gene_name = trim(shell_exec("egrep \"$gene_name$\" data/orf2std.tab | cut -f" . $field));
+            if ($_SESSION["namespace"] != 'Std') $gene_name = trim(shell_exec("egrep \"$gene_name$\" data/orf2std.tab | cut -f" . $field));
             if (empty($gene_name)) $gene_name = $match[4];
             echo <<< EOT
               <tr>
