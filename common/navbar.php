@@ -22,6 +22,11 @@
       ?>>
       <a href="properties.php">Properties</a></li>
       
+      <li<?php
+        if(basename($_SERVER['PHP_SELF']) == 'go.php') echo " class=\"active\"";
+      ?>>
+      <a href="go.php">Ontology</a></li>
+      
       <li class="dropdown <?php if(basename($_SERVER['PHP_SELF']) == 'expression.php') echo "active"; ?>">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Expression<span class="caret"></span></a>
         <ul class="dropdown-menu">
