@@ -291,7 +291,7 @@ EOT;
     if(isset($ignoreList))
       echo '<h6>*(These genes were ignored as they do not exists in the expressions data files: <font color="red">'.$ignoreList.'</font>)</h6><br/>';
     echo '<p>Download link for all uploaded gene table results</p>';
-    echo '<a href="expression.php?download=true&lab='.$lab.'&cond='.$cond.'" class="btn btn-default" role="button">Download '.$labCond.'.tab</a>';
+    echo '<a href="expression.php?download=true&lab='.$lab.'&cond='.$cond.'" class="btn btn-default" role="button"><span class="glyphicon glyphicon-download-alt"></span> Download '.$labCond.'.tab</a>';
 
   } // End of: if(!isset($_SESSION["uploadedGenes"]))
   

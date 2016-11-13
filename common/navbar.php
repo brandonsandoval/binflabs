@@ -67,9 +67,32 @@
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Change Namespace <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="namespace.php?namespace=ID&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>SGD ID</b> (e.g. S000000001)</a></th>
-          <li><a href="namespace.php?namespace=Sys&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>Systematic Name</b> (e.g. YAL001C)</a></th>
-          <li><a href="namespace.php?namespace=Std&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>"><b>Standard Name</b> (e.g. TFC3)</a></th>
+          <li><a href="namespace.php?namespace=ID&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>">
+            <?php
+              if(!isset($_SESSION['namespace']))
+                $_SESSION['namespace'] = "Sys";
+              if($_SESSION['namespace'] == "ID") 
+                echo '<span class="glyphicon glyphicon-check"></span>';
+              else
+                echo '<span class="glyphicon glyphicon-unchecked"></span>';
+            ?>
+            <b> SGD ID</b> (e.g. S000000001)</a></th>
+          <li><a href="namespace.php?namespace=Sys&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>">
+            <?php 
+              if($_SESSION['namespace'] == "Sys") 
+                echo '<span class="glyphicon glyphicon-check"></span>';
+              else
+                echo '<span class="glyphicon glyphicon-unchecked"></span>';
+            ?>
+            <b> Systematic Name</b> (e.g. YAL001C)</a></th>
+          <li><a href="namespace.php?namespace=Std&return=<?php echo urlencode($_SERVER["REQUEST_URI"]); ?>">
+            <?php 
+              if($_SESSION['namespace'] == "Std") 
+                echo '<span class="glyphicon glyphicon-check"></span>';
+              else
+                echo '<span class="glyphicon glyphicon-unchecked"></span>';
+            ?>
+            <b> Standard Name</b> (e.g. TFC3)</a></th>
         </ul>
       </li>
     </ul>

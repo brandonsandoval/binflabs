@@ -84,7 +84,7 @@ EOT;
           echo <<< EOT
             </tbody>
           </table>
-          <a href="properties.php?download=true" class="btn btn-default" type="submit">Download pathway information</a>
+          <a href="properties.php?download=true" class="btn btn-default" type="submit"><span class="glyphicon glyphicon-download-alt"></span> Download pathway information</a>
 EOT;
         }
       ?>

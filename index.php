@@ -20,7 +20,7 @@
             <div class="modal-body">
               <p>Only Saccharomyces Cerevisiae (Yeast) genes are accepted, any other genes of invalid format or genes that are not found in our database will be silently ignored.</p>
               <p>They must be formatted in one of the three acceptable namespace formats, for example: <b>&quotS000000001&quot</b>, <b>&quotYAL014C&quot</b> or <b>&quotTFC3&quot</b>, you may upload genes of different formats in the same submission.</p>
-              <p>Accepted characters are <b>&quotA-Z&quot</b>, <b>&quota-z&quot</b>, <b>&quot0-9&quot</b> and <b>&quot-&quot</b>, use newlines to separate genes.</p>
+              <p>Accepted characters are <b>&quotA-Z&quot</b>, <b>&quota-z&quot</b>, <b>&quot0-9&quot</b> and <b>&quot_-().&quot</b>, use newlines to separate genes.</p>
               <p>Uploading text or files to the gene list will always <b>add</b> to the current gene list, if you wish to start new, then press &quotRemove all&quot at the bottom of the gene list</p>
             </div>
             <div class="modal-footer">
