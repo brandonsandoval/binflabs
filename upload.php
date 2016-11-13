@@ -41,6 +41,12 @@ foreach($uploadedGenesRaw as $gene){
   // Only accept alpha-numeric and "(", ")", "-" characters
   $acceptable = array('-', '_', '(', ')', '.');
   if(ctype_alnum(str_replace($acceptable, '', $gene))){
+    // First check if we already have uploaded that gene
+    if(in_array($gene, $_SESSION["uploadedGenesID"], true) ||
+       in_array($gene, $_SESSION["uploadedGenesSys"], true) ||
+       in_array($gene, $_SESSION["uploadedGenesStd"], true)){
+      continue;
+    }
     // We are going to check if the input is a valid id, systematic or standard name
     $lineID = null;
     $lineSys = null;
