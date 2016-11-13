@@ -3,3 +3,4 @@ interactions/tf-interactions.tab
 js/sigma.js-1.2.0/data/pp-interactions.gexf 
 js/sigma.js-1.2.0/data/tf-interactions.gexf
 sgd_pathways.tab
+sessions/*

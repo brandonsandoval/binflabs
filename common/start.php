@@ -7,8 +7,11 @@
     ini_set('session.gc_maxlifetime', 24*3600);
     ini_set('session.cache_expire', 24*3600);
     session_set_cookie_params(24*3600);
+    
     // Change session path to prevent it from being deleted from standard temp folder
-    ini_set('session.save_path', '/tmp_amd/adams/export/adams/2/z5020926/public_html/binflabs/sessions');
+    if(php_uname('s') == "Linux"){
+      ini_set('session.save_path', '/tmp_amd/adams/export/adams/2/'.get_current_user().'/public_html/binflabs/sessions');
+    }
 
     // Make sure PHP displays errors
     ini_set('display_errors', 1);
