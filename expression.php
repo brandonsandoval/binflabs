@@ -38,8 +38,18 @@
       $lineClean = preg_replace("/  /", "", $line);
       echo $lineClean;
       foreach($_SESSION["uploadedGenesSys"] as $key => $gene){
+        // Escape the gene to use special chars
+        $escgene = $_SESSION["uploadedGenesSys"][$key];
+        $escgene = str_replace("(", "\\(", $escgene);
+        $escgene = str_replace(")", "\\)", $escgene);
+        $escgene = str_replace(".", "\\.", $escgene);
+        $escgene = str_replace("-", "\\-", $escgene);
         // Get line from .tab file that corresponds to the gene
-        $line = shell_exec('egrep "'.$_SESSION["uploadedGenesSys"][$key].'" data/expression/'.$lab.'_'.$cond.'.tab');
+        $line = shell_exec('egrep "'.$escgene.'" data/expression/'.$lab.'_'.$cond.'.tab');
+        if($line == ""){
+          continue; //ignore empty lines
+        }
+        
         // strip out unwanted space chars and newlines
         $lineClean = preg_replace("/ /", "", $line);
         $lineClean = preg_replace("/\n/", "", $lineClean);
@@ -67,8 +77,25 @@
   
   
     foreach($_SESSION["uploadedGenes".$_SESSION["namespace"]] as $key => $gene){
+      // Escape the gene to use special chars
+      $escgene = $_SESSION["uploadedGenesSys"][$key];
+      $escgene = str_replace("(", "\\(", $escgene);
+      $escgene = str_replace(")", "\\)", $escgene);
+      $escgene = str_replace(".", "\\.", $escgene);
+      $escgene = str_replace("-", "\\-", $escgene);
       // Get line from .tab file that corresponds to the gene
-      $line = shell_exec('egrep "'.$_SESSION["uploadedGenesSys"][$key].'" data/expression/'.$lab.'_'.$cond.'.tab');
+      $line = shell_exec('egrep "'.$escgene.'" data/expression/'.$lab.'_'.$cond.'.tab');
+      // add unknown genes to ignore list
+      if($line == ""){
+        if(!isset($ignoreList)){
+          $ignoreList = " ".$gene;
+        }else{
+          $ignoreList .= ", ".$gene;
+        }
+        continue;
+      }else{
+        $atLeastOne = true;
+      }
       // strip out unwanted space chars
       $lineClean = preg_replace("/ /", "", $line);
       
@@ -102,22 +129,24 @@
         }
       }
     }
-    // Compute the highest and lowest sum totals gene by the sum of there values
-    // We will show these in a table
-    $highestSum = -99999999;
-    $lowestSum = 99999999;
-    foreach($expression[$labCond.'_sum'] as $geneName => $geneSum){
-      if($geneSum > $highestSum){
-        $highestSum = $geneSum;
-        $highestGeneName = $geneName;
+    if(isset($atLeastOne)){
+      // Compute the highest and lowest sum totals gene by the sum of there values
+      // We will show these in a table
+      $highestSum = -99999999;
+      $lowestSum = 99999999;
+      foreach($expression[$labCond.'_sum'] as $geneName => $geneSum){
+        if($geneSum > $highestSum){
+          $highestSum = $geneSum;
+          $highestGeneName = $geneName;
+        }
+        if($geneSum < $lowestSum){
+          $lowestSum = $geneSum;
+          $lowestGeneName = $geneName;
+        }
       }
-      if($geneSum < $lowestSum){
-        $lowestSum = $geneSum;
-        $lowestGeneName = $geneName;
-      }
+      $expression[$labCond.'_highest'] = $highestGeneName;
+      $expression[$labCond.'_lowest'] = $lowestGeneName;
     }
-    $expression[$labCond.'_highest'] = $highestGeneName;
-    $expression[$labCond.'_lowest'] = $lowestGeneName;
   }
 
   echo '<html lang="en">';
@@ -125,7 +154,7 @@
   //print_session();
   
   // If genes are uploaded we can import the scripts for graphing
-  if(isset($_SESSION["uploadedGenes"])){
+  if(isset($_SESSION["uploadedGenes"]) && isset($atLeastOne)){
 echo <<< EOT
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -181,7 +210,10 @@ EOT;
   // Display notice if user has not uploaded anything
   if(!isset($_SESSION["uploadedGenes"])){
     echo '<div class="inner-container"><p><b>Please <a href="../binflabs">upload</a> a list of genes before continuing..</b></p></div>';
-  } else {
+  } else if(!isset($atLeastOne)){
+    echo '<div class="inner-container"><p><b>Please <a href="../binflabs">upload</a> a list of genes before continuing..</b></p></div>';
+    echo '<h6>*(These genes were ignored as they do not exists in the expressions data files: <font color="red">'.$ignoreList.'</font>)</h6><br/>';
+  }else if(isset($atLeastOne)){
   // continue on if they have uploaded
     echo '<center><br/>';
     echo '<h4>'.ucfirst($lab).' - '.$cond.' levels</h4>';
@@ -254,13 +286,15 @@ EOT;
 echo <<< EOT
       </tbody>
     </table>
-    <h6>*(Note: NULLs and Blanks in dataset are treated as 0s in table/chart)</h6>
-    <p>Download link for all uploaded gene table results</p>
+    <h6>*(NULLs and Blanks in dataset are treated as 0s in table/chart)</h6>
 EOT;
+    if(isset($ignoreList))
+      echo '<h6>*(These genes were ignored as they do not exists in the expressions data files: <font color="red">'.$ignoreList.'</font>)</h6><br/>';
+    echo '<p>Download link for all uploaded gene table results</p>';
     echo '<a href="expression.php?download=true&lab='.$lab.'&cond='.$cond.'" class="btn btn-default" role="button">Download '.$labCond.'.tab</a>';
 
   } // End of: if(!isset($_SESSION["uploadedGenes"]))
-
+  
   echo '<br/><br/><br/><br/></div><!-- /.container -->';
   include 'common/footer.php';
   echo '</body></html>';
