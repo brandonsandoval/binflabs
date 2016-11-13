@@ -29,8 +29,8 @@
             $gene = preg_replace('/[(]/', '\(', $gene);
             $gene = preg_replace('/[)]/', '\)', $gene);
             $gene = preg_replace('/[.]/', '\.', $gene);
-            $relevant_interactions = array_filter(array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/ppi.tab"))))));
-            $contents .= shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/ppi.tab");
+            $relevant_interactions = array_filter(array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("egrep \"^$gene\\s\" data/interactions/ppi.tab"))))));
+            $contents .= shell_exec("egrep \"^$gene\\s\" data/interactions/ppi.tab");
           }
           file_put_contents('interactions/pp-interactions.tab', $contents);
 
