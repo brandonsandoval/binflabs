@@ -39,7 +39,7 @@ if(!isset($_SESSION["namespace"])){
 // Check uploadedGenesRaw for valid gene names and store them in uploadedGenes
 foreach($uploadedGenesRaw as $gene){
   // Only accept alpha-numeric and "(", ")", "-" characters
-  $acceptable = array('-');
+  $acceptable = array('-', '_', '(', ')', '.');
   if(ctype_alnum(str_replace($acceptable, '', $gene))){
     // We are going to check if the input is a valid id, systematic or standard name
     $lineID = null;
