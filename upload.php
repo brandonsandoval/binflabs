@@ -42,24 +42,32 @@ foreach($uploadedGenesRaw as $gene){
   $acceptable = array('-', '_', '(', ')', '.');
   if(ctype_alnum(str_replace($acceptable, '', $gene))){
     // First check if we already have uploaded that gene
-    if(in_array($gene, $_SESSION["uploadedGenesID"], true) ||
-       in_array($gene, $_SESSION["uploadedGenesSys"], true) ||
-       in_array($gene, $_SESSION["uploadedGenesStd"], true)){
-      continue;
+    if(isset($_SESSION["uploadedGenes"])){
+      if(in_array($gene, $_SESSION["uploadedGenesID"], true) ||
+         in_array($gene, $_SESSION["uploadedGenesSys"], true) ||
+         in_array($gene, $_SESSION["uploadedGenesStd"], true)){
+        continue;
+      }
     }
+    // Escape these genes with special chars to be used by grep commands
+    $escgene = $gene;
+    $escgene = str_replace("(", "\\(", $escgene);
+    $escgene = str_replace(")", "\\)", $escgene);
+    $escgene = str_replace(".", "\\.", $escgene);
+    $escgene = str_replace("-", "\\-", $escgene);
     // We are going to check if the input is a valid id, systematic or standard name
     $lineID = null;
     $lineSys = null;
     $lineStd = null;
     // Slightly different grep command for Linux/Mac OSs
     if(php_uname('s') == "Linux"){
-      $lineID = exec('grep -P "^'.$gene.'\\t" data/orf2std.tab');
-      $lineSys = exec('grep -P "\\t'.$gene.'\\t" data/orf2std.tab');
-      $lineStd = exec('grep -P "\\t'.$gene.'$" data/orf2std.tab');
+      $lineID = exec('grep -P "^'.$escgene.'\\t" data/orf2std.tab');
+      $lineSys = exec('grep -P "\\t'.$escgene.'\\t" data/orf2std.tab');
+      $lineStd = exec('grep -P "\\t'.$escgene.'$" data/orf2std.tab');
     }else{
-      $lineID = exec('grep "^'.$gene.'\\t" data/orf2std.tab');
-      $lineSys = exec('grep "\\t'.$gene.'\\t" data/orf2std.tab');
-      $lineStd = exec('grep "\\t'.$gene.'$" data/orf2std.tab');
+      $lineID = exec('grep "^'.$escgene.'\\t" data/orf2std.tab');
+      $lineSys = exec('grep "\\t'.$escgene.'\\t" data/orf2std.tab');
+      $lineStd = exec('grep "\\t'.$escgene.'$" data/orf2std.tab');
     }
     
     // Initalize arrays if we have a valid line and it does not exist
@@ -72,7 +80,7 @@ foreach($uploadedGenesRaw as $gene){
     }
     // Add the correct formatted gene to the list
     if($lineID){
-      if(preg_match("/^".$gene."\t(.*)\t(.*)$/", $lineID, $match)){
+      if(preg_match("/^".$escgene."\t(.*)\t(.*)$/", $lineID, $match)){
         $_SESSION["uploadedGenes"] = true;
         array_push($_SESSION["uploadedGenesID"], $gene);
         if($match[1] == "")
@@ -89,7 +97,7 @@ foreach($uploadedGenesRaw as $gene){
         exit;
       }
     }else if($lineSys){
-      if(preg_match("/^(.*)\t".$gene."\t(.*)$/", $lineSys, $match)){
+      if(preg_match("/^(.*)\t".$escgene."\t(.*)$/", $lineSys, $match)){
         $_SESSION["uploadedGenes"] = true;
         if($match[1] == "")
           array_push($_SESSION["uploadedGenesID"], "NO-NAME");
@@ -106,7 +114,7 @@ foreach($uploadedGenesRaw as $gene){
         exit;
       }
     }else if($lineStd){
-      if(preg_match("/^(.*)\t(.*)\t".$gene."$/", $lineStd, $match)){
+      if(preg_match("/^(.*)\t(.*)\t".$escgene."$/", $lineStd, $match)){
         $_SESSION["uploadedGenes"] = true;
         if($match[1] == "")
           array_push($_SESSION["uploadedGenesID"], "NO-NAME");
