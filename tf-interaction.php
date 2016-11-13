@@ -26,6 +26,9 @@
           $relevant_interactions = array();
           $contents = "";
           foreach ($_SESSION["uploadedGenesSys"] as $gene) {
+            $gene = preg_replace('/[(]/', '\(', $gene);
+            $gene = preg_replace('/[)]/', '\)', $gene);
+            $gene = preg_replace('/[.]/', '\.', $gene);
             $relevant_interactions = array_filter(array_unique(array_merge($relevant_interactions, explode("\n", trim(shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/tfbinds.tab"))))));
             $contents .= shell_exec("egrep \"$gene\\s|$gene$\" data/interactions/tfbinds.tab");
           }

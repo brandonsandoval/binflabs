@@ -7,6 +7,7 @@
     $relevant_properties = array();
     $contents = "";
     foreach ($_SESSION["uploadedGenesStd"] as $gene) {
+      $gene = preg_replace('/[.]/', '\.', $gene);
       $relevant_properties = array_filter(array_unique(array_merge($relevant_properties, explode("\n", shell_exec("grep -P \"\\t$gene\\t\" data/properties/sgd_pathways.tab")))));
       $contents .= shell_exec("grep -P \"\\t$gene\\t\" data/properties/sgd_pathways.tab");
     }
