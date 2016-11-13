@@ -69,8 +69,14 @@ foreach($uploadedGenesRaw as $gene){
       if(preg_match("/^".$gene."\t(.*)\t(.*)$/", $lineID, $match)){
         $_SESSION["uploadedGenes"] = true;
         array_push($_SESSION["uploadedGenesID"], $gene);
-        array_push($_SESSION["uploadedGenesSys"], $match[1]);
-        array_push($_SESSION["uploadedGenesStd"], $match[2]);
+        if($match[1] == "")
+          array_push($_SESSION["uploadedGenesSys"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesSys"], $match[1]);
+        if($match[2] == "")
+          array_push($_SESSION["uploadedGenesStd"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesStd"], $match[2]);
       }else{
         echo "Input error";
         session_destroy();
@@ -79,20 +85,31 @@ foreach($uploadedGenesRaw as $gene){
     }else if($lineSys){
       if(preg_match("/^(.*)\t".$gene."\t(.*)$/", $lineSys, $match)){
         $_SESSION["uploadedGenes"] = true;
-        array_push($_SESSION["uploadedGenesID"], $match[1]);
+        if($match[1] == "")
+          array_push($_SESSION["uploadedGenesID"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesID"], $match[1]);
         array_push($_SESSION["uploadedGenesSys"], $gene);
-        array_push($_SESSION["uploadedGenesStd"], $match[2]);
+        if($match[2] == "")
+          array_push($_SESSION["uploadedGenesStd"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesStd"], $match[2]);
       }else{
         echo "Input error";
         session_destroy();
         exit;
       }
-      array_push($_SESSION["uploadedGenes"], $gene);
     }else if($lineStd){
       if(preg_match("/^(.*)\t(.*)\t".$gene."$/", $lineStd, $match)){
         $_SESSION["uploadedGenes"] = true;
-        array_push($_SESSION["uploadedGenesID"], $match[1]);
-        array_push($_SESSION["uploadedGenesSys"], $match[2]);
+        if($match[1] == "")
+          array_push($_SESSION["uploadedGenesID"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesID"], $match[1]);
+        if($match[2] == "")
+          array_push($_SESSION["uploadedGenesSys"], "NO-NAME");
+        else
+          array_push($_SESSION["uploadedGenesSys"], $match[2]);
         array_push($_SESSION["uploadedGenesStd"], $gene);
       }else{
         echo "Input error";
